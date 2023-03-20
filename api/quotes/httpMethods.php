@@ -1,8 +1,8 @@
 <?php
 
-include_once '../../models/quote.php';
-include_once '../../helper/error.php';
-include_once '../../helper/verify.php';
+include_once('../../models/quote.php');
+include_once('../../helper/error.php');
+include_once('../../helper/verify.php');
 
 Class HttpMethods{
   private $db;

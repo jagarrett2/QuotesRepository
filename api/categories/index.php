@@ -10,7 +10,7 @@
       exit();
   }
 
-  include_once '../../config/Database.php';
+  include_once '../../config/Database2.php';
   include_once './httpMethods.php';
 
   try{
