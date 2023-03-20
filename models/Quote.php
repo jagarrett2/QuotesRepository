@@ -20,18 +20,20 @@
       $count = $result->rowCount();
       $arr = array();
       if($count > 0){
-
         while($row = $result->fetch(PDO::FETCH_ASSOC)){
           extract($row);
 
           $item = array(
             'id' => $id,
             'quote' => $quote,
-            'author_name' => $author_name,
-            'category_name' => $category_name
+            'author' => $author,
+            'category' => $category
           );
           array_push($arr, $item);
         }
+      }
+      if($count == 1){
+        return $arr[0];
       }
       return $arr;
     }
@@ -40,7 +42,7 @@
     // Get Posts
     public function read() {
       // Create query
-      $query = 'SELECT q.id, q.quote, a.author as author_name, c.category as category_name
+      $query = 'SELECT q.id, q.quote, a.author, c.category
                                 FROM ' . $this->table . ' q
                                 LEFT JOIN
                                   categories c ON q.category_id = c.id
@@ -58,7 +60,7 @@
     // Get Single Post
     public function read_single() {
           // Create query
-          $query = 'SELECT q.id, q.quote, a.author as author_name, c.category as category_name
+          $query = 'SELECT q.id, q.quote, a.author, c.category
                                     FROM ' . $this->table . ' q
                                     LEFT JOIN
                                       categories c ON q.category_id = c.id
@@ -80,7 +82,7 @@
     }
 
     public function read_by_category(){
-      $query = 'SELECT q.id, q.quote, a.author as author_name, c.category as category_name
+      $query = 'SELECT q.id, q.quote, a.author, c.category
                                 FROM ' . $this->table . ' q
                                 LEFT JOIN
                                   categories c ON q.category_id = c.id
@@ -99,7 +101,7 @@
     }
 
     public function read_by_author(){
-      $query = 'SELECT q.id, q.quote, a.author as author_name, c.category as category_name
+      $query = 'SELECT q.id, q.quote, a.author, c.category
                                 FROM ' . $this->table . ' q
                                 LEFT JOIN
                                   categories c ON q.category_id = c.id
@@ -118,7 +120,7 @@
     }
 
     public function read_by_author_and_category(){
-      $query = 'SELECT q.id, q.quote, a.author as author_name, c.category as category_name
+      $query = 'SELECT q.id, q.quote, a.author, c.category
       FROM ' . $this->table . ' q
       LEFT JOIN
         categories c ON q.category_id = c.id
