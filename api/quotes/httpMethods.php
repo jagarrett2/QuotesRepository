@@ -1,6 +1,6 @@
 <?php
 
-include_once('../../models/quote.php');
+include_once('../../models/Quote.php');
 include_once('../../helper/error.php');
 include_once('../../helper/verify.php');
 

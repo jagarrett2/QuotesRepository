@@ -1,6 +1,6 @@
 <?php
 
-include_once '../../models/author.php';
+include_once '../../models/Author.php';
 include_once '../../helper/error.php';
 include_once '../../helper/verify.php';
 

@@ -1,7 +1,7 @@
 <?php
-    include_once '../../models/quote.php';
-    include_once '../../models/author.php';
-    include_once '../../models/category.php';
+    include_once '../../models/Quote.php';
+    include_once '../../models/Author.php';
+    include_once '../../models/Category.php';
     function VerifyAuthor($db, $id){
       $author = new Author($db);
       $author->id = $id;
