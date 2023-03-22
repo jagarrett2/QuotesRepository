@@ -74,16 +74,13 @@ Class HttpMethods{
         error("category_id Not Found");
         return;
       }
-    
-      // Create quote
-      if($quote->create()) {
-        echo json_encode(
-          array('message' => 'Quote Created')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Quote Not Created')
-        );
+
+      $response = $quote->create();
+      if($response){
+        echo json_encode($response);
+      }
+      else{
+        error("Unable to Create Quote");
       }
     }
     
@@ -116,15 +113,12 @@ Class HttpMethods{
         return;
       }
     
-      // Create quote
-      if($quote->update()) {
-        echo json_encode(
-          array('message' => 'Quote Updated')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Quote Not Upated')
-        );
+      $response = $quote->update();
+      if($response){
+        echo json_encode($response);
+      }
+      else{
+        error("Unable to Update Quote");
       }
     }
 
@@ -145,14 +139,12 @@ Class HttpMethods{
         return;
       }
 
-      if($quote->delete()) {
-        echo json_encode(
-          array('message' => 'Quote Deleted')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Quote Not Deleted')
-        );
+      $response = $quote->delete();
+      if($response){
+        echo json_encode($response);
+      }
+      else{
+        error("Unable to Update Quote");
       }
     }
 }

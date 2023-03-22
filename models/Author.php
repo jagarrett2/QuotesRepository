@@ -13,7 +13,7 @@
       $this->conn = $db;
     }
 
-    private function extract_rows($result){
+    private function extract_rows($result, $single){
       $count = $result->rowCount();
       $arr = array();
       if($count > 0){
@@ -28,7 +28,7 @@
           array_push($arr, $item);
         }
       }
-      if($count == 1){
+      if($count > 0 and $single){
         return $arr[0];
       }
       return $arr;
@@ -50,7 +50,7 @@
 
       // Execute query
       $stmt->execute();
-      return $this->extract_rows($stmt);
+      return $this->extract_rows($stmt, false);
     }
 
     // Get Single author
@@ -73,35 +73,25 @@
       // Execute query
       $stmt->execute();
 
-      return $this->extract_rows($stmt);
+      return $this->extract_rows($stmt, true);
   }
 
-  // Create author
   public function create() {
-    // Create Query
-    $query = 'INSERT INTO ' .
-      $this->table . '
-    SET
-      author = :author';
+    // Create query
+    $query = 'INSERT INTO authors (author) VALUES (?)';
+    $stmt = $this->conn->prepare($query);      
 
-  // Prepare Statement
-  $stmt = $this->conn->prepare($query);
+    $author = htmlspecialchars(strip_tags($this->author));
 
-  // Clean data
-  $this->author = htmlspecialchars(strip_tags($this->author));
-
-  // Bind data
-  $stmt-> bindParam(':author', $this->author);
-
-  // Execute query
-  if($stmt->execute()) {
-    return true;
-  }
-
+        // Execute query
+      if($stmt->execute(array($author))) {
+        $response = new stdClass();
+        $response->id = $last_id = $this->conn->lastInsertId();
+        $response->author = $author;
+        return $response;
+      }
   // Print error if something goes wrong
   printf("Error: %s.\n", $stmt->error);
-
-  return false;
   }
 
   // Update author
@@ -122,12 +112,15 @@
   $this->id = htmlspecialchars(strip_tags($this->id));
 
   // Bind data
-  $stmt-> bindParam(':name', $this->author);
+  $stmt-> bindParam(':author', $this->author);
   $stmt-> bindParam(':id', $this->id);
 
   // Execute query
   if($stmt->execute()) {
-    return true;
+    $response = new stdClass();
+    $response->id = $this->id;
+    $response->author = $this->author;
+    return $response;
   }
 
   // Print error if something goes wrong
@@ -152,7 +145,9 @@
 
     // Execute query
     if($stmt->execute()) {
-      return true;
+      $response = new stdClass();
+      $response->id = $this->id;
+      return $response;
     }
 
     // Print error if something goes wrong

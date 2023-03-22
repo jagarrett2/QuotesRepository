@@ -28,7 +28,7 @@
       $http_methods->Put();
     } 
     elseif ($method === 'DELETE'){
-      $http_methods->Delete()();
+      $http_methods->Delete();
     } 
     else{
       include_once '../../helper/error.php';

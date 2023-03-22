@@ -14,7 +14,7 @@
       $this->conn = $db;
     }
 
-    private function extract_rows($result){
+    private function extract_rows($result, $single){
       $count = $result->rowCount();
       $arr = array();
       if($count > 0){
@@ -29,7 +29,7 @@
           array_push($arr, $item);
         }
       }
-      if($count == 1){
+      if($count > 0 and $single){
         return $arr[0];
       }
       return $arr;
@@ -52,7 +52,7 @@
       // Execute query
       $stmt->execute();
 
-      return $this->extract_rows($stmt);
+      return $this->extract_rows($stmt, false);
     }
     
 
@@ -76,35 +76,25 @@
       // Execute query
       $stmt->execute();
       
-      return $this->extract_rows($stmt);
+      return $this->extract_rows($stmt, true);
   }
 
-  // Create Category
   public function create() {
-    // Create Query
-    $query = 'INSERT INTO ' .
-      $this->table . '
-    SET
-      category = :category';
+         // Create query
+        $query = 'INSERT INTO categories (category) VALUES (?)';
+        $stmt = $this->conn->prepare($query);      
 
-  // Prepare Statement
-  $stmt = $this->conn->prepare($query);
+        $category = htmlspecialchars(strip_tags($this->category));
 
-  // Clean data
-  $this->category = htmlspecialchars(strip_tags($this->category));
-
-  // Bind data
-  $stmt-> bindParam(':category', $this->category);
-
-  // Execute query
-  if($stmt->execute()) {
-    return true;
-  }
-
+        // Execute query
+        if($stmt->execute(array($category))) {
+          $response = new stdClass();
+          $response->id = $last_id = $this->conn->lastInsertId();
+          $response->category = $category;
+          return $response;
+        }
   // Print error if something goes wrong
   printf("Error: %s.\n", $stmt->error);
-
-  return false;
   }
 
   // Update Category
@@ -125,12 +115,15 @@
   $this->id = htmlspecialchars(strip_tags($this->id));
 
   // Bind data
-  $stmt-> bindParam(':name', $this->category);
+  $stmt-> bindParam(':category', $this->category);
   $stmt-> bindParam(':id', $this->id);
 
   // Execute query
   if($stmt->execute()) {
-    return true;
+    $response = new stdClass();
+    $response->id = $this->id;
+    $response->category = $this->category;
+    return $response;
   }
 
   // Print error if something goes wrong
@@ -155,7 +148,9 @@
 
     // Execute query
     if($stmt->execute()) {
-      return true;
+      $response = new stdClass();
+      $response->id = $this->id;
+      return $response;
     }
 
     // Print error if something goes wrong

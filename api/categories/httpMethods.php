@@ -2,6 +2,7 @@
 
 include_once '../../models/Category.php';
 include_once '../../helper/error.php';
+include_once('../../helper/verify.php');
 
 Class HttpMethods{
   private $db;
@@ -26,7 +27,7 @@ Class HttpMethods{
           echo json_encode($result);
         }
         else{
-          error("No Categories Found");
+          error("category_id Not Found");
         }
     }
 
@@ -43,14 +44,12 @@ Class HttpMethods{
       $category->category = $data->category;
     
       // Create quote
-      if($category->create()) {
-        echo json_encode(
-          array('message' => 'Category Created')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Category Not Created')
-        );
+      $result = $category->create();
+      if($result){
+        echo json_encode($result);
+      }
+      else{
+        error("category_id Not Found");
       }
     }
     
@@ -73,14 +72,12 @@ Class HttpMethods{
       }
     
       // Create quote
-      if($category->update()) {
-        echo json_encode(
-          array('message' => 'Category Updated')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Category Not Upated')
-        );
+      $result = $category->update();
+      if($result){
+        echo json_encode($result);
+      }
+      else{
+        error("category_id Not Found");
       }
     }
 
@@ -101,14 +98,12 @@ Class HttpMethods{
         return;
       }
 
-      if($category->delete()) {
-        echo json_encode(
-          array('message' => 'Category Deleted')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Category Not Deleted')
-        );
+      $result = $category->delete();
+      if($result){
+        echo json_encode($result);
+      }
+      else{
+        error("category_id Not Found");
       }
     }
 }

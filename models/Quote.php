@@ -16,7 +16,7 @@
     }
 
 
-    private function extract_rows($result){
+    private function extract_rows($result, $single){
       $count = $result->rowCount();
       $arr = array();
       if($count > 0){
@@ -32,7 +32,7 @@
           array_push($arr, $item);
         }
       }
-      if($count == 1){
+      if($count > 0 and $single){
         return $arr[0];
       }
       return $arr;
@@ -54,7 +54,7 @@
       // Prepare statement
       $stmt = $this->conn->prepare($query);
       $stmt->execute();
-      return $this->extract_rows($stmt);
+      return $this->extract_rows($stmt, false);
     }
 
     // Get Single Post
@@ -68,7 +68,7 @@
                                       authors a ON q.author_id = a.id
                                     WHERE
                                       q.id = ?
-                                    LIMIT 0,1';
+                                    LIMIT 1';
 
           // Prepare statement
           $stmt = $this->conn->prepare($query);
@@ -78,7 +78,7 @@
 
           // Execute query
           $stmt->execute();
-          return $this->extract_rows($stmt);
+          return $this->extract_rows($stmt, true);
     }
 
     public function read_by_category(){
@@ -97,7 +97,7 @@
       $stmt->bindParam(1, $this->category_id);
 
       $stmt->execute();
-      return $this->extract_rows($stmt);
+      return $this->extract_rows($stmt, false);
     }
 
     public function read_by_author(){
@@ -116,7 +116,7 @@
       $stmt->bindParam(1, $this->author_id);
 
       $stmt->execute();
-      return $this->extract_rows($stmt);
+      return $this->extract_rows($stmt, false);
     }
 
     public function read_by_author_and_category(){
@@ -137,36 +137,31 @@
       $stmt->bindParam(2, $this->category_id);
 
       $stmt->execute();
-      return $this->extract_rows($stmt);
+      return $this->extract_rows($stmt, false);
     }
     
     // Create Post
     public function create() {
           // Create query
-          $query = 'INSERT INTO ' . $this->table . ' SET quote = :quote, author_id = :author_id, category_id = :category_id';
+          $query = 'INSERT INTO quotes (quote, author_id, category_id) VALUES (?, ?, ?)';
+          $stmt = $this->conn->prepare($query);      
 
-          // Prepare statement
-          $stmt = $this->conn->prepare($query);
-
-          // Clean data
-          $this->quote = htmlspecialchars(strip_tags($this->quote));
-          $this->author_id = htmlspecialchars(strip_tags($this->author_id));
-          $this->category_id = htmlspecialchars(strip_tags($this->category_id));
-
-          // Bind data
-          $stmt->bindParam(':quote', $this->quote);
-          $stmt->bindParam(':author_id', $this->author_id);
-          $stmt->bindParam(':category_id', $this->category_id);
+          $quote = htmlspecialchars(strip_tags($this->quote));
+          $author_id = htmlspecialchars(strip_tags($this->author_id));
+          $category_id = htmlspecialchars(strip_tags($this->category_id));
 
           // Execute query
-          if($stmt->execute()) {
-            return true;
-      }
+          if($stmt->execute(array($quote, $author_id, $category_id))) {
+            $response = new stdClass();
+            $response->id = $last_id = $this->conn->lastInsertId();
+            $response->quote = $quote;
+            $response->author_id = $author_id;
+            $response->category_id = $category_id;
+            return $response;
+          }
 
       // Print error if something goes wrong
       printf("Error: %s.\n", $stmt->error);
-
-      return false;
     }
 
     // Update Post
@@ -193,13 +188,16 @@
 
           // Execute query
           if($stmt->execute()) {
-            return true;
+            $response = new stdClass();
+            $response->id = $this->id;
+            $response->quote = $this->quote;
+            $response->author_id = $this->author_id;
+            $response->category_id = $this->category_id;
+            return $response;
           }
 
           // Print error if something goes wrong
           printf("Error: %s.\n", $stmt->error);
-
-          return false;
     }
 
     // Delete Post
@@ -218,7 +216,9 @@
 
           // Execute query
           if($stmt->execute()) {
-            return true;
+            $response = new stdClass();
+            $response->id = $this->id;
+            return $response;
           }
 
           // Print error if something goes wrong

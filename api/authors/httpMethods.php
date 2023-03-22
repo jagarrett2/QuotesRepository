@@ -2,7 +2,7 @@
 
 include_once '../../models/Author.php';
 include_once '../../helper/error.php';
-include_once '../../helper/verify.php';
+include_once('../../helper/verify.php');
 
 Class HttpMethods{
   private $db;
@@ -27,7 +27,7 @@ Class HttpMethods{
           echo json_encode($result);
         }
         else{
-          error("No Authors Found");
+          error("author_id Not Found");
         }
     }
 
@@ -44,14 +44,12 @@ Class HttpMethods{
       $author->author = $data->author;
     
       // Create quote
-      if($author->create()) {
-        echo json_encode(
-          array('message' => 'Author Created')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Author Not Created')
-        );
+      $response = $author->create();
+      if($response){
+        echo json_encode($response);
+      }
+      else{
+        error("Unable to Create Author");
       }
     }
     
@@ -74,14 +72,12 @@ Class HttpMethods{
       }
     
       // Create quote
-      if($author->update()) {
-        echo json_encode(
-          array('message' => 'Author Updated')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Author Not Upated')
-        );
+      $response = $author->update();
+      if($response){
+        echo json_encode($response);
+      }
+      else{
+        error("Unable to Create Author");
       }
     }
 
@@ -102,14 +98,12 @@ Class HttpMethods{
         return;
       }
 
-      if($author->delete()) {
-        echo json_encode(
-          array('message' => 'Author Deleted')
-        );
-      } else {
-        echo json_encode(
-          array('message' => 'Author Not Deleted')
-        );
+      $response = $author->delete();
+      if($response){
+        echo json_encode($response);
+      }
+      else{
+        error("Unable to Create Author");
       }
     }
 }
