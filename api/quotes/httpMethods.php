@@ -9,8 +9,8 @@ Class HttpMethods{
   public function __construct($db) {
     $this->db = $db;
   }
+    //Handles the /Quotes, /Quotes/?id, /Quotes/?author_id&category_id, /Quotes/?author_id, /Quotes/?category_id paths
     public function Get(){
-        // Instantiate blog quote object
         $quote = new Quote($this->db);
         $id = isset($_GET['id']) ? $_GET['id'] : null;
         $author_id = isset($_GET['author_id']) ? $_GET['author_id'] : null;

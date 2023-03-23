@@ -39,7 +39,7 @@
     }
 
 
-    // Get Posts
+    // Get Quotes
     public function read() {
       // Create query
       $query = 'SELECT q.id, q.quote, a.author, c.category
@@ -57,7 +57,7 @@
       return $this->extract_rows($stmt, false);
     }
 
-    // Get Single Post
+    // Get Single Quote
     public function read_single() {
           // Create query
           $query = 'SELECT q.id, q.quote, a.author, c.category
@@ -81,6 +81,7 @@
           return $this->extract_rows($stmt, true);
     }
 
+    //Get Quotes by Category
     public function read_by_category(){
       $query = 'SELECT q.id, q.quote, a.author, c.category
                                 FROM ' . $this->table . ' q
@@ -119,6 +120,7 @@
       return $this->extract_rows($stmt, false);
     }
 
+    //Get Quotes by Author and Category ID
     public function read_by_author_and_category(){
       $query = 'SELECT q.id, q.quote, a.author, c.category
       FROM ' . $this->table . ' q
@@ -140,7 +142,7 @@
       return $this->extract_rows($stmt, false);
     }
     
-    // Create Post
+    // Create Quote
     public function create() {
           // Create query
           $query = 'INSERT INTO quotes (quote, author_id, category_id) VALUES (?, ?, ?)';
@@ -164,7 +166,7 @@
       printf("Error: %s.\n", $stmt->error);
     }
 
-    // Update Post
+    // Update Quote
     public function update() {
           // Create query
           $query = 'UPDATE ' . $this->table . '
@@ -200,7 +202,7 @@
           printf("Error: %s.\n", $stmt->error);
     }
 
-    // Delete Post
+    // Delete Quote
     public function delete() {
           // Create query
           $query = 'DELETE FROM ' . $this->table . ' WHERE id = :id';

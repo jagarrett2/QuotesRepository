@@ -17,6 +17,7 @@
   try{
     $database = new Database();
     $db = $database->connect();
+    //Selects method
     $http_methods = new HttpMethods($db);
     if ($method === 'GET'){
       $http_methods->Get();

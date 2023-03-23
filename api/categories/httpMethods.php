@@ -9,6 +9,7 @@ Class HttpMethods{
   public function __construct($db) {
     $this->db = $db;
   }
+    //handles the /Categories and /Categories/?id paths
     public function Get(){
         $category = new Category($this->db);
         $id = isset($_GET['id']) ? $_GET['id'] : null;

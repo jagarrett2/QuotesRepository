@@ -9,6 +9,7 @@ Class HttpMethods{
   public function __construct($db) {
     $this->db = $db;
   }
+    //Handles the GET Quotes and Quotes/?id paths
     public function Get(){
         $quote = new Author($this->db);
         $id = isset($_GET['id']) ? $_GET['id'] : null;

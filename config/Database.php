@@ -7,6 +7,7 @@
         private $username;
         private $password;
 
+        //Grabs Environment variables set on repl
         public function __construct(){
             $this->username = getenv('USERNAME');
             $this->password = getenv("PASSWORD");
